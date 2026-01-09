@@ -60,74 +60,60 @@ spinningEmojis.innerHTML = Array(5)
     .map(() => `<span class="spin-emoji">${variation.emoji}</span>`)
     .join('');
 
-// Norway timezone (CET/CEST)
-const NORWAY_TIMEZONE = 'Europe/Oslo';
+// Norway timezone
+const NORWAY_TZ = 'Europe/Oslo';
 
-// Get next Friday 15:00 in Norway time
-function getNextFriday1500() {
-    const now = new Date();
-    
-    // Create a date formatter for Norway timezone
-    const norwayFormatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: NORWAY_TIMEZONE,
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
+// Get current day/hour in Norway
+function getNorwayNow() {
+    const fmt = new Intl.DateTimeFormat('en-GB', {
+        timeZone: NORWAY_TZ,
+        weekday: 'short',
         hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        weekday: 'short'
+        hour12: false
     });
-    
-    // Parse Norway time
-    const parts = norwayFormatter.formatToParts(now);
-    const getPart = (type) => parts.find(p => p.type === type)?.value;
-    
-    const norwayDay = getPart('weekday');
-    const norwayHour = parseInt(getPart('hour'));
-    const norwayMinute = parseInt(getPart('minute'));
-    
-    // Map day names to numbers (0 = Sunday, 5 = Friday)
-    const dayMap = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-    const currentDayNum = dayMap[norwayDay];
-    
-    // Calculate days until Friday
-    let daysUntilFriday = (5 - currentDayNum + 7) % 7;
-    
-    // If it's Friday, check if we're past 15:00
-    if (daysUntilFriday === 0 && (norwayHour > 15 || (norwayHour === 15 && norwayMinute >= 0))) {
-        // It's Friday after 15:00, next Friday is in 7 days
-        daysUntilFriday = 7;
-    }
-    
-    // Create target date
-    const target = new Date(now);
-    target.setDate(target.getDate() + daysUntilFriday);
-    
-    // Set to 15:00 Norway time
-    // We need to find what UTC time corresponds to 15:00 in Norway
-    const targetDateStr = target.toISOString().split('T')[0];
-    
-    // Create a date at 15:00 Norway time
-    // Use a trick: create date string and parse it
-    const targetNorway = new Date(`${targetDateStr}T15:00:00`);
-    
-    // Get the offset for Norway at that date
-    const testDate = new Date(targetDateStr + 'T12:00:00Z');
-    const norwayOffset = getTimezoneOffset(testDate, NORWAY_TIMEZONE);
-    
-    // Adjust for timezone
-    targetNorway.setTime(targetNorway.getTime() + norwayOffset * 60 * 1000);
-    
-    return targetNorway;
+    const str = fmt.format(new Date());
+    const [weekday, time] = str.split(' ');
+    const [hour, minute] = time.split(':').map(Number);
+    return { weekday, hour, minute };
 }
 
-// Get timezone offset in minutes
-function getTimezoneOffset(date, timeZone) {
-    const utcDate = new Date(date.toLocaleString('en-US', { timeZone: 'UTC' }));
-    const tzDate = new Date(date.toLocaleString('en-US', { timeZone }));
-    return (utcDate - tzDate) / 60000;
+// Get next Friday 15:00 Norway time as a Date
+function getNextFriday1500() {
+    const { weekday, hour, minute } = getNorwayNow();
+    const days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    const today = days[weekday];
+    
+    let daysToFriday = (5 - today + 7) % 7;
+    if (daysToFriday === 0 && (hour > 15 || (hour === 15 && minute >= 0))) {
+        daysToFriday = 7;
+    }
+    
+    // Build target date string in Norway timezone, then parse it
+    const now = new Date();
+    now.setDate(now.getDate() + daysToFriday);
+    
+    const dateStr = new Intl.DateTimeFormat('sv-SE', {
+        timeZone: NORWAY_TZ,
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).format(now);
+    
+    // Parse as Norway time: "YYYY-MM-DD 15:00" in Europe/Oslo
+    // Use a trick: create date, get its UTC offset for Norway, adjust
+    const [y, m, d] = dateStr.split('-').map(Number);
+    
+    // Friday 15:00 Norway = 14:00 UTC (winter) or 13:00 UTC (summer)
+    // Get the offset dynamically
+    const probe = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+    const utcStr = probe.toISOString();
+    const norwayStr = probe.toLocaleString('sv-SE', { timeZone: NORWAY_TZ });
+    const norwayHour = parseInt(norwayStr.split(' ')[1].split(':')[0]);
+    const offset = norwayHour - 12; // Hours ahead of UTC
+    
+    // Target: 15:00 Norway = (15 - offset):00 UTC
+    return new Date(Date.UTC(y, m - 1, d, 15 - offset, 0, 0));
 }
 
 // Check if it's party time (Friday 15:00 to Sunday 23:59)
@@ -140,7 +126,7 @@ function isPartyTime() {
     const now = new Date();
     
     const norwayFormatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: NORWAY_TIMEZONE,
+        timeZone: NORWAY_TZ,
         weekday: 'short',
         hour: '2-digit',
         minute: '2-digit',
