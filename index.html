@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beer Time! 🍺</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="background-pattern"></div>
+    <div class="container">
+        <div id="countdown-mode" class="mode">
+            <h1 class="title">
+                <span class="emoji-left" id="emoji-left">🍺</span>
+                <span id="title-text">Beer Time</span>
+                <span class="emoji-right" id="emoji-right">🍺</span>
+            </h1>
+            <p class="subtitle">Countdown to Friday 15:00</p>
+            <div class="countdown" id="countdown">
+                <div class="time-block">
+                    <span class="time-value" id="days">0</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="separator">:</div>
+                <div class="time-block">
+                    <span class="time-value" id="hours">0</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="separator">:</div>
+                <div class="time-block">
+                    <span class="time-value" id="minutes">0</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+                <div class="separator">:</div>
+                <div class="time-block">
+                    <span class="time-value" id="seconds">0</span>
+                    <span class="time-label">Seconds</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="party-mode" class="mode hidden">
+            <h1 class="party-title" id="party-title">
+                It's Beer Time!
+            </h1>
+            <div class="spinning-emojis" id="spinning-emojis">
+                <span class="spin-emoji">🍺</span>
+                <span class="spin-emoji">🍺</span>
+                <span class="spin-emoji">🍺</span>
+                <span class="spin-emoji">🍺</span>
+                <span class="spin-emoji">🍺</span>
+            </div>
+            <p class="party-subtitle">Enjoy your weekend! 🎉</p>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Add <code>?name=Wine&variation=wine</code> to customize!</p>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
