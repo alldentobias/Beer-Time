@@ -27,70 +27,90 @@
     <meta name="twitter:image" content="https://beer.allden.dev/og-image.png">
     
     <!-- Theme Color -->
-    <meta name="theme-color" content="#ff6b35">
-    <meta name="msapplication-TileColor" content="#ff6b35">
+    <meta name="theme-color" content="#12392B">
+    <meta name="msapplication-TileColor" content="#12392B">
     
     <!-- Favicon (emoji as data URI) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Shrikhand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="background-pattern"></div>
-    <div class="container">
-        <div id="countdown-mode" class="mode">
-            <h1 class="title">
-                <span class="emoji-left" id="emoji-left">🍺</span>
-                <span id="title-text">Beer Time</span>
-                <span class="emoji-right" id="emoji-right">🍺</span>
-            </h1>
-            <p class="subtitle">Countdown to Friday 15:00</p>
-            <div class="countdown" id="countdown">
-                <div class="time-block">
-                    <span class="time-value" id="days">0</span>
-                    <span class="time-label">Days</span>
-                </div>
-                <div class="separator">:</div>
-                <div class="time-block">
-                    <span class="time-value" id="hours">0</span>
-                    <span class="time-label">Hours</span>
-                </div>
-                <div class="separator">:</div>
-                <div class="time-block">
-                    <span class="time-value" id="minutes">0</span>
-                    <span class="time-label">Minutes</span>
-                </div>
-                <div class="separator">:</div>
-                <div class="time-block">
-                    <span class="time-value" id="seconds">0</span>
-                    <span class="time-label">Seconds</span>
+    <main class="stage">
+        <div class="glass" id="glass" data-vessel="pint" aria-hidden="true">
+            <div class="head"></div>
+            <div class="glass-body">
+                <div class="liquid" id="liquid">
+                    <span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>
+                    <span class="bubble"></span><span class="bubble"></span><span class="bubble"></span>
+                    <span class="bubble"></span><span class="bubble"></span>
                 </div>
             </div>
         </div>
-        
-        <div id="party-mode" class="mode hidden">
-            <h1 class="party-title" id="party-title">
-                It's Beer Time!
-            </h1>
-            <div class="spinning-emojis" id="spinning-emojis">
-                <span class="spin-emoji">🍺</span>
-                <span class="spin-emoji">🍺</span>
-                <span class="spin-emoji">🍺</span>
-                <span class="spin-emoji">🍺</span>
-                <span class="spin-emoji">🍺</span>
-            </div>
-            <p class="party-subtitle">Enjoy your weekend! 🎉</p>
+
+        <div class="copy">
+            <section id="countdown-mode" class="mode">
+                <h1 class="title"><span id="title-text">Beer Time</span></h1>
+                <p class="lede">until <span id="beer-time-label">Friday 15:00</span>, Norway time</p>
+                <p class="countdown" aria-hidden="true">
+                    <span class="unit"><span class="num" id="days">0</span>d</span>
+                    <span class="unit"><span class="num" id="hours">00</span>h</span>
+                    <span class="unit"><span class="num" id="minutes">00</span>m</span>
+                    <span class="unit"><span class="num" id="seconds">00</span>s</span>
+                </p>
+                <p class="sr-only" id="countdown-sr" aria-live="polite"></p>
+                <p class="progress" id="progress-text"></p>
+            </section>
+
+            <section id="party-mode" class="mode hidden">
+                <h1 class="title" id="party-title">It's Beer Time!</h1>
+                <p class="lede">Cheers, and enjoy your weekend.</p>
+                <p class="hint">Click or press any key for more confetti.</p>
+            </section>
         </div>
-    </div>
+    </main>
     
-    <footer>
-        <p>Add <code>?name=Wine&variation=wine</code> to customize!</p>
-    </footer>
+    <button class="settings-toggle" type="button" popovertarget="settings" aria-label="Settings">
+        <!-- Cog icon from Lucide (ISC licence) -->
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+    </button>
+
+    <div class="settings" id="settings" popover>
+        <form id="settings-form" method="get">
+            <h2>Make it yours</h2>
+            <label>Day
+                <select name="day">
+                    <option value="mon">Monday</option>
+                    <option value="tue">Tuesday</option>
+                    <option value="wed">Wednesday</option>
+                    <option value="thu">Thursday</option>
+                    <option value="fri">Friday</option>
+                    <option value="sat">Saturday</option>
+                    <option value="sun">Sunday</option>
+                </select>
+            </label>
+            <label>Time (Norway)
+                <input name="time" type="time" required>
+            </label>
+            <label>Theme
+                <select name="variation"></select>
+            </label>
+            <label>Name
+                <input name="name" type="text" maxlength="30" placeholder="Beer">
+            </label>
+            <div class="settings-actions">
+                <button type="button" popovertarget="settings" popovertargetaction="hide">Cancel</button>
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </div>
     
     <script src="script.js"></script>
 </body>
 </html>
-
